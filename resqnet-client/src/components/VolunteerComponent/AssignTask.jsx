@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../api/apiservice";
 import { Button, Table, Modal } from "flowbite-react";
 import { FaArrowLeft } from "react-icons/fa";
+
 const AssignTask = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,28 +12,20 @@ const AssignTask = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [fullname, setFullname] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
-
-
-    const fetchVolunteerDetails = async (volunteerId) => {
+    const fetchVolunteerDetails = async (id) => {
       try {
-        //console.log("Extracted Volunteer ID:", extractedId);
-
-        const res = await fetch(`${BASE_URL}/api/user/get/${volunteerId}`, {
-          method: "GET",
+        const res = await fetch(`${BASE_URL}/api/user/get/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         if (res.ok) {
-
           const data = await res.json();
           setVolunteerArea(data.area);
           setFullname(data.fullName);
-          console.log("Volunteer area:", data.area);
         } else {
           console.error("Failed to fetch volunteer details:", res.statusText);
         }
@@ -40,36 +33,13 @@ const AssignTask = () => {
         console.error("Error fetching volunteer details:", error.message);
       }
     };
+
     const url = window.location.href;
     const idIndex = url.lastIndexOf("/");
     const extractedId = idIndex !== -1 ? url.substring(idIndex + 1) : null;
     setVolunteerId(extractedId);
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/volunteers/tasks`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (res.ok) {
 
-          const data = await res.json();
-          setTasks(data.tasks);
-          console.log("Fetched tasks:", tasks);
-          setLoading(false);
-        } else {
-          console.error("Failed to fetch tasks:", res.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching tasks:", error.message);
-      }
-    };
-
-    if (extractedId) {
-      fetchVolunteerDetails(extractedId);
-    }
+    if (extractedId) fetchVolunteerDetails(extractedId);
 
     fetchTasks();
   }, []);
@@ -77,7 +47,6 @@ const AssignTask = () => {
   const fetchTasks = async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/volunteers/tasks`, {
-        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -86,6 +55,7 @@ const AssignTask = () => {
       if (res.ok) {
         const data = await res.json();
         setTasks(data.tasks);
+        console.log("Fetched tasks:", data.tasks);
         setLoading(false);
       } else {
         console.error("Failed to fetch tasks:", res.statusText);
@@ -98,11 +68,6 @@ const AssignTask = () => {
   const handleAssignClick = (task) => {
     setSelectedTask(task);
     setShowConfirmationModal(true);
-  };
-
-  const handleDeleteClick = (task) => {
-    setSelectedTask(task);
-    setShowDeleteModal(true);
   };
 
   const handleConfirmAssign = async () => {
@@ -133,68 +98,64 @@ const AssignTask = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <Button
-        color="primary"
+        color="gray"
         className="flex items-center mb-4"
         onClick={() => window.history.back()}
       >
         <FaArrowLeft className="mr-2" /> Back
       </Button>
-      <h2 className="text-2xl font-bold mb-10 text-center mt-5">Assign Task</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Assign Task</h2>
 
       {loading ? (
         <p>Loading tasks...</p>
       ) : (
         <>
-          <Table hoverable className="shadow-md">
+          <Table hoverable className="shadow-md rounded">
             <Table.Head>
               <Table.HeadCell>Name</Table.HeadCell>
               <Table.HeadCell>Description</Table.HeadCell>
               <Table.HeadCell>Location</Table.HeadCell>
-              <Table.HeadCell>Assign</Table.HeadCell>
+              <Table.HeadCell>Action</Table.HeadCell>
             </Table.Head>
             <Table.Body>
               {tasks.map((task) => (
                 <Table.Row key={task._id} className="hover:bg-gray-100">
-                  <Table.Cell className="bg-gray-50 dark:bg-gray-700 font-bold">
-                    {task.name}
-                  </Table.Cell>
+                  <Table.Cell>{task.name}</Table.Cell>
                   <Table.Cell>{task.description}</Table.Cell>
-                  {task.area === volunteerArea ? (
-                    <Table.Cell style={{ color: "red" }}>
-                      Same Location
-                    </Table.Cell>
-                  ) : (
-                    <Table.Cell>{task.area}</Table.Cell>
-                  )}
-                  {/* <Table.Cell>
+                  <Table.Cell
+                    className={
+                      volunteerArea && task.area === volunteerArea
+                        ? "text-red-500 font-bold"
+                        : ""
+                    }
+                  >
+                    {volunteerArea && task.area === volunteerArea
+                      ? "Same Location"
+                      : task.area}
+                  </Table.Cell>
+                  <Table.Cell>
                     {task.assignedVolunteer ? (
-                      <Button className="dark" disabled>
+                      <Button color="gray" disabled size="sm">
                         Assigned
                       </Button>
                     ) : (
                       <Button
-                        className="dark"
+                        color="blue"
+                        size="sm"
                         onClick={() => handleAssignClick(task)}
                       >
                         Assign
                       </Button>
                     )}
-                  </Table.Cell> */}
-                  <Table.Cell>
-                    <Button
-                      className="dark"
-                      onClick={() => handleAssignClick(task)}
-                    >
-                      Assign
-                    </Button>
                   </Table.Cell>
-
                 </Table.Row>
               ))}
             </Table.Body>
           </Table>
+
+          {/* Confirmation Modal */}
           <Modal
             show={showConfirmationModal}
             onClose={() => setShowConfirmationModal(false)}
@@ -202,21 +163,23 @@ const AssignTask = () => {
           >
             <Modal.Header>Confirmation</Modal.Header>
             <Modal.Body>
-              Are you sure you want to assign task "{selectedTask?.name}" to{" "}
-              {fullname}?
+              Are you sure you want to assign "{selectedTask?.name}" to{" "}
+              <strong>{fullname}</strong>?
             </Modal.Body>
             <Modal.Footer>
-              <Button color="success" onClick={handleConfirmAssign}>
+              <Button color="green" onClick={handleConfirmAssign}>
                 Yes
               </Button>
               <Button
-                color="danger"
+                color="gray"
                 onClick={() => setShowConfirmationModal(false)}
               >
                 Cancel
               </Button>
             </Modal.Footer>
           </Modal>
+
+          {/* Success Modal */}
           <Modal
             show={showSuccessModal}
             onClose={() => setShowSuccessModal(false)}
@@ -226,11 +189,8 @@ const AssignTask = () => {
             <Modal.Body>Task assigned successfully!</Modal.Body>
             <Modal.Footer>
               <Button
-                color="success"
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  fetchTasks(); // Refresh tasks after success
-                }}
+                color="green"
+                onClick={() => setShowSuccessModal(false)}
               >
                 OK
               </Button>

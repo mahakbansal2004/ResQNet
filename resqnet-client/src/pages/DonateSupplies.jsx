@@ -109,7 +109,7 @@ const DonateSupplies = () => {
                 onChange={handleChange}
               />
             </div>
-            <Button type="submit" color="success" disabled={loading}>
+            <Button type="submit" color="green" disabled={loading}>
               {loading ? "Submitting..." : "Donate "}
             </Button>
           </form>

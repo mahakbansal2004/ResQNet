@@ -19,7 +19,7 @@ const EmergencyList = ({
                 className="text-gray-500 hover:text-gray-700"
                 onClick={() => handleEditIncident(incident)}
               >
-                <HiOutlinePencilAlt color="blue" />
+                <HiOutlinePencilAlt color="gray" />
               </button>
             )}
             {currentUser.user.role === "admin" && (

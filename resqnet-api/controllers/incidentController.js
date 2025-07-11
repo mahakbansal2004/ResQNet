@@ -77,9 +77,17 @@ export const updateIncident = async (req, res) => {
   }
 };
 
+import mongoose from "mongoose";
+
 export const getIncidentById = async (req, res) => {
   try {
     const { incidentId } = req.params;
+
+    // ✅ Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(incidentId)) {
+      return res.status(400).json({ message: "Invalid incident ID" });
+    }
+
     const incident = await Incident.findById(incidentId);
 
     if (!incident) {
@@ -92,6 +100,7 @@ export const getIncidentById = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 export const getAllIncidents = async (req, res) => {
   try {

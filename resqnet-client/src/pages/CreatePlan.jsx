@@ -132,6 +132,13 @@ const CreatePlan = () => {
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem("token");
+console.log("🔥 Token:", token);
+if (!token) {
+  toast.error("User is not logged in. Please login again.");
+  return;
+}
+
       const response = await fetch(
         `${BASE_URL}/api/plans/user/${currentUser.user._id}/emergencyplan`,
         {
@@ -403,7 +410,7 @@ const CreatePlan = () => {
           </div>
         </div>
 
-        <Button type="submit" color="success">
+        <Button type="submit" color="gray">
           Submit
         </Button>
       </form>

@@ -374,10 +374,15 @@ const UpdateProfile = () => {
               </Button>
             </div>
             <div className="mb-4 col-span-full">
-              <Button type="submit" color="success" fullSized>
-                Update Profile
+              <Button
+                type="submit"
+                color="green" // ✅ Flowbite uses 'green' for success
+                className="w-full" // ✅ Makes button full width
+              >
+              Update Profile
               </Button>
             </div>
+
             {imageFileError && (
               <div className="text-red-500 text-sm col-span-full">
                 {imageFileError}

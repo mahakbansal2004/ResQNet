@@ -62,12 +62,12 @@ export const register = async (req, res, next) => {
       token,
       user: savedUser,
     });
-  } catch (error) {
-    console.log(error);
-  }
+  } 
 
-  // Pass other errors to the error handling middleware
-  next(error);
+  catch (err) {
+  console.error("Error in register:", err);
+  res.status(500).json({ message: "Server error", error: err.message });
+}
 };
 
 export const login = async (req, res, next) => {

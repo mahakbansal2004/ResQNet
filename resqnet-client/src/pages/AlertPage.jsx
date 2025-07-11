@@ -50,10 +50,16 @@ const AlertPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [alertsPerPage] = useState(5);
 
-  const onPageChange = (page) => setCurrentPage(page);
+
 
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
+
+  const onPageChange = (page) => {
+  console.log("📄 Changing to page:", page); // Debug
+  setCurrentPage(page);
+  window.scrollTo({ top: 0, behavior: "smooth" }); // optional: scroll to top
+};
 
   useEffect(() => {
     fetchAlerts();
@@ -223,37 +229,77 @@ const AlertPage = () => {
       >
         <canvas ref={chartRef}></canvas>
       </div>
-      <div className="overflow-x-auto mb-6">
-        <Table hoverable className="min-w-full shadow-md">
-          <Table.Head>
-            <Table.HeadCell>Type</Table.HeadCell>
-            <Table.HeadCell>Message</Table.HeadCell>
-            <Table.HeadCell>Location</Table.HeadCell>
-            <Table.HeadCell>Severity</Table.HeadCell>
-            <Table.HeadCell>Status</Table.HeadCell>
-            <Table.HeadCell>Time</Table.HeadCell>
-          </Table.Head>
-          <Table.Body>
-            {currentAlerts.map((alert) => (
-              <Table.Row key={alert.id} className="hover:bg-gray-100">
-                <Table.Cell className="font-bold">{alert.type}</Table.Cell>
-                <Table.Cell>{alert.message}</Table.Cell>
-                <Table.Cell>{alert.location}</Table.Cell>
-                <Table.Cell>{alert.severity.toUpperCase()}</Table.Cell>
-                <Table.Cell>{alert.status}</Table.Cell>
-                <Table.Cell>{formatTimestamp(alert.timestamp)}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      </div>
-      <div className="flex justify-center mb-6">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(alerts.length / alertsPerPage)}
-          onPageChange={onPageChange}
-        />
-      </div>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+  
+
+
+{alerts.length > 0 ? (
+<div className="overflow-x-auto mb-6">
+  <table className="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg shadow-md bg-white">
+    <thead className="bg-gray-100 text-gray-700">
+      <tr>
+        <th className="px-4 py-2 text-left font-semibold">Type</th>
+        <th className="px-4 py-2 text-left font-semibold">Message</th>
+        <th className="px-4 py-2 text-left font-semibold">Location</th>
+        <th className="px-4 py-2 text-left font-semibold">Severity</th>
+        <th className="px-4 py-2 text-left font-semibold">Status</th>
+        <th className="px-4 py-2 text-left font-semibold">Time</th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-gray-200">
+      {currentAlerts.map((alert) => (
+        <tr key={alert.id} className="hover:bg-gray-50">
+          <td className="px-4 py-2 font-medium">{alert.type}</td>
+          <td className="px-4 py-2">{alert.message}</td>
+          <td className="px-4 py-2">{alert.location}</td>
+          <td className="px-4 py-2 uppercase">{alert.severity}</td>
+          <td className="px-4 py-2">{alert.status}</td>
+          <td className="px-4 py-2">{formatTimestamp(alert.timestamp)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+
+) : (
+  <p className="text-center text-gray-500 my-8">
+    No alerts to display.
+  </p>
+)}
+</div>
+
+    
+  <div className="flex justify-center space-x-2 mt-4">
+    <Button
+      className="px-2 py-1 border rounded bg-gray-100"
+      color="red"
+      size="sm"
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+    >
+      Previous
+    </Button>
+    <span className="px-2 py-1 border rounded bg-gray-100">
+      Page {currentPage} of {Math.ceil(alerts.length / alertsPerPage)}
+    </span>
+    <Button
+      className="px-2 py-1 border rounded bg-gray-100"
+      color="red"
+      size="sm"
+      onClick={() =>
+        setCurrentPage((prev) =>
+          Math.min(prev + 1, Math.ceil(alerts.length / alertsPerPage))
+        )
+      }
+      disabled={currentPage === Math.ceil(alerts.length / alertsPerPage)}
+    >
+      Next
+    </Button>
+
+  </div>
+
 
       <Modal show={isModalOpen} onClose={handleCloseModal} size="lg">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
@@ -267,6 +313,7 @@ const AlertPage = () => {
                 <TextInput
                   id="type"
                   name="type"
+                  color="gray"
                   value={formData.type}
                   onChange={handleChange}
                   required
@@ -278,6 +325,7 @@ const AlertPage = () => {
                 <TextInput
                   id="message"
                   name="message"
+                  color="gray"
                   value={formData.message}
                   onChange={handleChange}
                   required
@@ -289,6 +337,7 @@ const AlertPage = () => {
                 <TextInput
                   id="location"
                   name="location"
+                  color="gray"
                   value={formData.location}
                   onChange={handleChange}
                   required
@@ -311,37 +360,37 @@ const AlertPage = () => {
                 </Select>
               </div>
               <div className="mb-2">
-                <Label htmlFor="status" value="Status" />
-                <Select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                >
-                  <option value="open">Open</option>
-                  <option value="closed">Closed</option>
-                </Select>
-              </div>
+             <Label htmlFor="status" value="Status" />
+               <Select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                color="gray"
+               >
+               <option value="open">Open</option>
+               <option value="closed">Closed</option>
+              </Select>
+             </div>
             </div>
           </Modal.Body>
           <Modal.Footer className="flex justify-end space-x-2 p-4">
             <Button
               type="submit"
-              color="success"
-              className="bg-green-500 text-white hover:bg-green-600 rounded-md py-2 px-4"
+              color="green"
+              className="w-full"
             >
               Submit
             </Button>
             <Button
-              color="gray"
-              onClick={handleCloseModal}
-              className="bg-gray-500 text-white hover:bg-gray-600 rounded-md py-2 px-4"
+             color="gray"
+             onClick={handleCloseModal}
             >
-              Cancel
+            Cancel
             </Button>
           </Modal.Footer>
+
         </form>
       </Modal>
 
