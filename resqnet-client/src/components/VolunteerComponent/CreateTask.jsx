@@ -48,8 +48,9 @@ const CreateTask = () => {
   return (
     <>
       <Button
-        color="primary"
+        color="gray"
         className="flex items-center mb-4"
+
         onClick={() => window.history.back()}
       >
         <FaArrowLeft className="mr-2" /> Back
@@ -60,7 +61,7 @@ const CreateTask = () => {
           className="max-w-md w-full p-6 bg-white shadow-md rounded-lg"
           onSubmit={handleSubmit}
         >
-          <h2 className="text-2xl font-bold mb-4">Create Task</h2>
+          <h2 className="text-2xl font-bold mb-4" color="gray">Create Task</h2>
           <div className="mb-4">
             <Label htmlFor="name" value="Name" />
             <TextInput

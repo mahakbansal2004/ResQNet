@@ -63,7 +63,8 @@ const EmergencyModal = ({
             {(currentUser.user.role === "admin" ||
               currentUser.user.role === "volunteer") && (
               <Link to={`/allocate/${selectedIncident._id}`}>
-                <Button className="w-auto mx-auto" link>
+                <Button className="w-auto mx-auto" color="gray"
+                 link>
                   Allocate
                 </Button>
               </Link>
@@ -162,15 +163,15 @@ const EmergencyModal = ({
               </div>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={
-                modalType === "addIncident" ? handleSubmit : handleUpdate
-              }
-            >
-              {modalType === "addIncident" ? "Submit" : "Update"}
-            </Button>
-          </ModalFooter>
+         <ModalFooter>
+  <Button
+    color={modalType === "addIncident" ? "blue" : "green"}
+    onClick={modalType === "addIncident" ? handleSubmit : handleUpdate}
+  >
+    {modalType === "addIncident" ? "Submit" : "Update"}
+  </Button>
+</ModalFooter>
+
         </>
       )}
     </Modal>

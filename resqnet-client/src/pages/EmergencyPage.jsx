@@ -26,6 +26,25 @@ const EmergencyPage = () => {
   const [incidentToDelete, setIncidentToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [searchLocation, setSearchLocation] = useState("");
+  const [location, setLocation] = useState("");
+  const [debouncedLocation, setDebouncedLocation] = useState(location);
+ // Debounce location input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedLocation(location);
+    }, 500); // wait 500ms after typing stops
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [location]);
+
+  useEffect(() => {
+    if (debouncedLocation.trim().length > 2) { // avoid API calls for short inputs
+      fetchIncidentsByLocation(debouncedLocation);
+    }
+  }, [debouncedLocation]);
+
 
   useEffect(() => {
     fetchIncidents();
@@ -212,22 +231,19 @@ const EmergencyPage = () => {
         </p>
       </div>
 
-      <div className="mb-2" style={{ maxWidth: "300px" }}>
-        <div className="relative">
-          <TextInput
-            id="small"
-            type="text"
-            sizing="sm"
-            placeholder="Search by location"
-            value={searchLocation}
-            onChange={handleSearchChange}
-          />
-          <HiOutlineSearch
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
-            onClick={() => fetchIncidentsByLocation(searchLocation)}
-          />
-        </div>
-      </div>
+      <TextInput
+  id="small"
+  type="text"
+  sizing="sm"
+  placeholder="Search by location"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+/>
+<HiOutlineSearch
+  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+  onClick={() => fetchIncidentsByLocation(location)}
+/>
+
 
       {(currentUser.user.role === "lead" ||
         currentUser.user.role === "admin" ||
@@ -236,6 +252,7 @@ const EmergencyPage = () => {
           <Button
             className="bg-green-500  text-white font-bold py-1 px-1 rounded"
             onClick={handleAddIncident}
+            color="gray"
           >
             <HiOutlinePlus className="mr-2" />
             Add

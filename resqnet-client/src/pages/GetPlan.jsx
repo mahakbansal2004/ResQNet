@@ -53,7 +53,7 @@ const GetPlan = () => {
           </p>
           <p className="mb-4">No emergency plans found.</p>
           <Link to="/createplan">
-            <Button color="success" className="flex items-center">
+            <Button color="gray" className="flex items-center">
               <span>Create New Plan</span>
               <FaPlus className="ml-2" />
             </Button>

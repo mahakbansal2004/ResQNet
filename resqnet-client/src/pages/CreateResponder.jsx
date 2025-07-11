@@ -115,7 +115,7 @@ const CreateResponder = () => {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <Button type="submit" color="success" className="mt-4">
+          <Button type="submit" color="gray" className="mt-4">
             Create Responder
           </Button>
         </div>

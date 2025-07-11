@@ -75,7 +75,7 @@ const DashShelters = () => {
         </div>
         {currentUser.user.role === "admin" && (
           <Link to="/add-shelter">
-            <Button className="ml-2"> Add</Button>
+            <Button className="ml-2"color="gray"> Add</Button>
           </Link>
         )}
       </div>

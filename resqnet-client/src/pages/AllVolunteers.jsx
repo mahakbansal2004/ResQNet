@@ -107,12 +107,12 @@ const AllVolunteers = () => {
                   <strong>Assigned Tasks:</strong>{" "}
                   {volunteer.assignedTasks.length > 0 &&
                   volunteer.assignedTasks[0].status !== "completed" ? (
-                    <Button color="success" size="xs">
+                    <Button color="gray" size="xs">
                       Assigned
                     </Button>
                   ) : (
                     <Link to={`/admin/assign-task/${volunteer._id}`}>
-                      <Button color="dark" size="xs" className="m-2">
+                      <Button color="gray" size="xs" className="m-2">
                         Assign
                       </Button>
                     </Link>
@@ -123,12 +123,33 @@ const AllVolunteers = () => {
           </div>
         ))}
       </div>
-      <div className="flex justify-center mt-6">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(volunteers.length / volunteersPerPage)}
-          onPageChange={paginate}
-        />
+      
+      <div className="flex justify-center space-x-2 mt-4">
+        <Button
+          className="px-2 py-1 border rounded bg-gray-100"
+          color="red"
+          size="sm"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="px-2 py-1 border rounded bg-gray-100">
+          Page {currentPage} of {Math.max(1, Math.ceil(volunteers.length / volunteersPerPage))}
+        </span>
+        <Button
+          className="px-2 py-1 border rounded bg-gray-100 "
+          color="red"
+          size="sm"
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, Math.ceil(volunteers.length / volunteersPerPage))
+            )
+          }
+          disabled={currentPage === Math.ceil(volunteers.length / volunteersPerPage)}
+        >
+          Next
+        </Button>
       </div>
       <Modal
         show={showModal}

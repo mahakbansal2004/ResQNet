@@ -82,7 +82,7 @@ const CommunityPage = () => {
             <h1 className="text-3xl font-bold text-green-500 mb-5">
               Community Hub
             </h1>
-            <Button color="success" onClick={() => setShowModal(true)}>
+            <Button color="gray" onClick={() => setShowModal(true)}>
               Ask Yours
             </Button>
           </div>
@@ -131,7 +131,7 @@ const CommunityPage = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleFormSubmit}>Submit</Button>
+          <Button color="gray" onClick={handleFormSubmit}>Submit</Button>
           <Button color="gray" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
